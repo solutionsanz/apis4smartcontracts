@@ -1,0 +1,23 @@
+{
+
+    "memory": "1G",
+    "instances": "1",
+
+    "environment": {
+
+        "API_GW_ENABLED":"false",
+        "API_GW_SERVER":"apip.oracleau.cloud",
+        "API_GW_BASEURL":"/api/jokes",
+        "API_GW_PORT":"443",
+        "API_GW_USERNAME":"weblogic",
+        "API_GW_PASSWORD":"welcome1",
+        "MONGODB_SERVER":"mongodbprod.oracleau.cloud",
+        "MONGODB_USERNAME":"api4jokesadmin",
+        "MONGODB_PASSWORD":"Welcome1",
+        "MONGODB_PORT":"27017",
+        "SMS_SERVER":"apis4notifications-gse00014296.uscom-east-1.oraclecloud.com",
+        "SMS_PORT":"443",
+        "SMS_PATH":"/sms"
+    }
+
+}

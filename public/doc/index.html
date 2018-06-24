@@ -1,0 +1,196 @@
+<!DOCTYPE>
+<html>
+<head lang="en">
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<title>Template Documentation Template</title>
+	<!-- Framework CSS -->
+	<link rel="stylesheet" href="assets/blueprint-css/screen.css" type="text/css" media="screen, projection">
+	<link rel="stylesheet" href="assets/blueprint-css/print.css" type="text/css" media="print">
+	<!--[if lt IE 8]><link rel="stylesheet" href="assets/blueprint-css/ie.css" type="text/css" media="screen, projection"><![endif]-->
+	<link rel="stylesheet" href="assets/blueprint-css/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
+	<style type="text/css" media="screen">
+		p, table, hr, .box { margin-bottom:25px; }
+		.box p { margin-bottom:10px; }
+		table tr:nth-child(2n) { background-color: #eee; }
+		table tr td, table tr th { border-right: 2px solid #fff; }
+		table tr td:last-child, table tr th:last-child { border-right: 0px none; }
+	</style>
+</head>
+
+
+<body>
+	<div class="container">
+	
+		<h3 class="center alt">&ldquo;Gs Customizable drag and drop&rdquo; Documentation by &ldquo;GsDevelopment&rdquo; v1.0</h3>
+		
+		<hr>
+		
+		<h1 class="center">&ldquo;Gs Customizable drag and drop&rdquo;</h1>
+		
+		<div class="borderTop">
+			<div class="span-6 colborder info prepend-1">
+				<p class="prepend-top">
+					<strong>
+					Created: 22/02/2015<br>
+					Last updated: 22/02/2015<br>
+					By: GsDevelopment<br>
+					Email: <a href="mailto:contact@gswebinnovation.com">contact@gswebinnovation.com</a>
+					</strong>
+				</p>
+			</div><!-- end div .span-6 -->		
+	
+			<div class="span-12 last">
+				<p class="prepend-top append-0">Thank you for purchasing our product. If you have any questions that are beyond the scope of this help file, please feel free to email me <a href="mailto:contact@gswebinnovation.com">here</a>.</p>
+			</div>
+		</div><!-- end div .borderTop -->
+		
+		<hr>
+		
+		<h2 id="toc" class="alt">Table of Contents</h2>
+		<ol class="alpha">
+			<li><a href="#about">About</a></li>
+			<li><a href="#htmlStructure">HTML Structure</a></li>
+			<li><a href="#cssFiles">CSS Files</a></li>
+			<li><a href="#javascript">JavaScript</a></li>
+			<li><a href="#usage">Usage</a></li>
+			<li><a href="#features">Features</a></li>
+		</ol>
+		
+		<hr>
+		
+		<h3 id="about"><strong>A) About GS Customizable drag and drop</strong> - <a href="#toc">top</a></h3>
+		<p>GS Customizable drag and drop allows you to sort, add, edit and delete items on a list.</p>
+        <ul>
+            <li>Set a initial order of the items - that will be displayed before the items are saved.</li>
+            <li>Set if you need to have handlers. Here we've added two options: generate handlers for all list items, or define your own handlers for a specific items.</li>
+            <li>Set if you want the Add option enabled - this will allow you to add new items to the list</li>
+            <li>Set if you want the Edit option enabled - this will allow you to edit all the items on the list</li>
+            <li>Set if you want the Delete option enabled - this will allow you to delete any item on the list</li>
+        </ul>
+		<hr>
+		
+		<h3 id="htmlStructure"><strong>B) HTML Structure</strong> - <a href="#toc">top</a></h3>
+		<p>The functionality of the product depends on the HTML structure, as the options can be added through the HTML markup: the messages and the Add option. Also an unique id and other specific attributes needs to be added on the list.</p>
+        <p style="margin-bottom:5px"><strong>HTML elements needed</strong> - please see in the image bellow what elements needs to be added in the HTML structure:</p>
+        <p><img src="assets/images/htmlstructure.jpg" alt="" /></p>
+		<hr>
+
+		<h3 id="cssFiles"><strong>C) CSS Files</strong> - <a href="#toc">top</a></h3>
+
+		<p>A CSS file is included in the archive that contains the styling of our elements, also you'll have the add the following lines(marked on the css file) in order to have the drag and drop working correctly:</p>
+        <p><img src="assets/images/css.jpg" alt="" /></p>		<hr>
+		
+		<h3 id="javascript"><strong>D) JavaScript</strong> - <a href="#toc">top</a></h3>
+		
+		<p><strong>This product was developed using pure JavaScript. No extra libraries were used, meaning that no extra dependencies are required so that this script works. Anyway, this module is compatible and can be used along with most the known frameworks.</strong></p>
+
+		<h3>Callback functions</h3>
+		<table bgcolor="#ccc" cellpadding="1" cellspacing="1">
+			<tr>
+				<th><strong>Event</strong></th>
+				<th>Callback Function</th>
+				<th>Info</th>
+			</tr>
+            <tr>
+				<td><strong>On list save</strong></td>
+				<td>onSave(e)</td>
+				<td>This event triggers when the list is saved. In our example we are displaying a message.</td>
+			</tr>
+            <tr>
+				<td><strong>AJAX Complete</strong></td>
+				<td>onAjaxComplete(e, data)</td>
+				<td>This event triggers after the AJAX call on the server is complete</td>
+			</tr>
+            <tr>
+				<td><strong>AJAX Failure</strong></td>
+				<td>onAjaxFailure(e)</td>
+				<td>This event triggers if the AJAX call failed</td>
+			</tr>
+
+		</table>
+
+		<h3>Options</h3>
+		<table bgcolor="#ccc" cellpadding="1" cellspacing="1">
+			<tr>
+				<th width="20%"><strong>Option</strong></th>
+				<th width="50%">Description</th>
+				<th width="20%">Accepts</th>
+			</tr>
+			<tr>
+				<td><strong>save</strong></td>
+				<td>Set if the list will be saved.</td>
+				<td>Boolean: true or false<br><strong>Default: true</strong></td>
+			</tr>
+			<tr>
+				<td><strong>initialOrder</strong></td>
+				<td>Set up an initial order of the items that will be used before the Save button is pressed </td>
+				<td>Array<br><strong>Default: an empty array</strong></td>
+			</tr>
+			<tr>
+				<td><strong>sendToPhp</strong></td>
+				<td>Set if the list should be send to a php. This also needs the 'save' option set to true.</td>
+				<td>Boolean: true or false<br><strong>Default: false</strong></td>
+			</tr>
+			<tr>
+				<td><strong>sendToPhpUrl</strong></td>
+				<td>Set the AJAX call of the PHP that will receive the final object with the list.</td>
+				<td>String<br><strong>Default: empty string</strong></td>
+			</tr>
+            <tr>
+				<td><strong>useHandler</strong></td>
+				<td>Set if handlers should be used. </td>
+				<td>Boolean: true or false<br><strong>Default: false</strong></td>
+			</tr>
+            <tr>
+				<td><strong>generateHandler</strong></td>
+				<td>Set if you need default handlers on all list items.</td>
+				<td>Boolean: true or false<br><strong>Default: false</strong></td>
+			</tr>
+            <tr>
+				<td><strong>handlerClass</strong></td>
+				<td>Set if custom handlers are needed and add the handlers class.</td>
+				<td>String<br><strong>Default: empty string</strong></td>
+			</tr>
+            <tr>
+				<td><strong>editItem</strong></td>
+				<td>Set if the items should have the edit option.</td>
+				<td>Boolean: true or false<br><strong>Default: false</strong></td>
+			</tr>
+            <tr>
+				<td><strong>deleteItem</strong></td>
+				<td>Set if the items should have the delete option.</td>
+				<td>Boolean: true or false<br><strong>Default: false</strong></td>
+			</tr>
+		</table>
+
+		<hr>
+		<h3 id="usage"><strong>E) Usage</strong> - <a href="#toc">top</a></h3>
+
+        <p>You'll just have to define a new constructor for the drag and drop that will contain all the options needed. Please see bellow an example:</p>
+        <p><img src="assets/images/usage.jpg" alt="Usage"></p>
+
+        
+		<h3 id="features"><strong>F) Features</strong> - <a href="#toc">top</a></h3>
+		
+		<p>Here are the main features of the Gs Customizable drag and drop:</p>
+		<ul>
+		    <li>No jQuery!</li>
+		    <li>Light weight JavaScript</li>
+		    <li>Use AJAX to send to a PHP a JSON that will contain the final object of the list(with the items ordered, edited, deleted).</li>
+		    <li>Fully customizable - you can disable/enable each option.</li>
+		    <li>Customizable messages - you can manage the text for the Save option, or when an empty item is added to the list.</li>
+		    <li>Sort the list by using drag and drop.</li>
+            <li>Addding new items to the list.</li>
+            <li>Editing/Deleting items from the list.</li>
+		</ul>
+		<hr>
+		
+		<p>Once again, thank you for your purchase. As I initially said, I'd be glad to help you if you have any questions relating to this item. No guarantees, but I'll do my best to assist.</p> 
+		
+		<p class="append-bottom alt large"><strong>GsDevelopment</strong></p>
+		<p><a href="#toc">Go To Table of Contents</a></p>
+		
+		<hr class="space">
+	</div><!-- end div .container -->
+</body>
+</html>
