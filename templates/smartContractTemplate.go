@@ -91,16 +91,7 @@ func (s *SmartContract) query@CONTRACT_NAME@(APIstub shim.ChaincodeStubInterface
 
 func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Response {
 	@CONTRACT_NAME_LC@s := []@CONTRACT_NAME@{
-		@CONTRACT_NAME@{Make: "Toyota", Model: "Prius", Colour: "blue", Owner: "Tomoko"},
-		@CONTRACT_NAME@{Make: "Ford", Model: "Mustang", Colour: "red", Owner: "Brad"},
-		@CONTRACT_NAME@{Make: "Hyundai", Model: "Tucson", Colour: "green", Owner: "Jin Soo"},
-		@CONTRACT_NAME@{Make: "Volkswagen", Model: "Passat", Colour: "yellow", Owner: "Max"},
-		@CONTRACT_NAME@{Make: "Tesla", Model: "S", Colour: "black", Owner: "Adriana"},
-		@CONTRACT_NAME@{Make: "Peugeot", Model: "205", Colour: "purple", Owner: "Michel"},
-		@CONTRACT_NAME@{Make: "Chery", Model: "S22L", Colour: "white", Owner: "Aarav"},
-		@CONTRACT_NAME@{Make: "Fiat", Model: "Punto", Colour: "violet", Owner: "Pari"},
-		@CONTRACT_NAME@{Make: "Tata", Model: "Nano", Colour: "indigo", Owner: "Valeria"},
-		@CONTRACT_NAME@{Make: "Holden", Model: "Barina", Colour: "brown", Owner: "Shotaro"},
+		@NEW_INITLEDGER_CONTRACT_ITEM@
 	}
 
 	i := 0

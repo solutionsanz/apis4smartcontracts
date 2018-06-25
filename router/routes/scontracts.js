@@ -69,8 +69,40 @@ module.exports = function (app) {
         console.log("Replacing key values in Smart Contract");
         var newSmartContract = origSmartContract;
         var val = "";
-        var CONST_CONTRACT_STRUCTURE_LINE = '@CONTRACT_PROPERTY_NAME@   string `json:"@CONTRACT_PROPERTY_NAME_JSON@"`';
 
+        var CONST_CONTRACT_STRUCTURE_LINE = '@CONTRACT_PROPERTY_NAME@   string `json:"@CONTRACT_PROPERTY_NAME_JSON@"`';
+        var CONST_INITLEDGER_CONTRACT_STRUCTURE_LINE = '@CONTRACT_NAME@';
+
+        /**
+         * Setting default random Contract's Init Ledger data
+         */
+        // **************** Set contract's initLedger structure
+        console.log("Set contract's initLedger structure");
+
+        for (var x = 0; x < 10; ++x) {
+
+            var sContractParamsJSON = {};
+
+            for (var i in sContractsBody) {
+
+                // Treat the first element as the Contract names and the rest as the fields name.
+                if (i == 0)
+                    continue;
+
+                val = sContractsBody[i].content;
+                sContractParamsJSON[val] = getRandomData();
+            }
+
+            console.log("Random InitLedger Structure is [" + JSON.stringify(sContractParamsJSON) + "]");
+            // Adding a new placeholder:
+            newSmartContract = newSmartContract.replace(/@NEW_INITLEDGER_CONTRACT_ITEM@/g, CONST_INITLEDGER_CONTRACT_STRUCTURE_LINE + JSON.stringify(sContractParamsJSON) + "," + "\n		@NEW_INITLEDGER_CONTRACT_ITEM@");
+
+        }
+
+
+        /**
+         * Setting default Contract's name and properties
+         */
         for (var i in sContractsBody) {
             val = sContractsBody[i].content;
             console.log("Property [" + i + "], value is [" + val + "]");
@@ -79,10 +111,12 @@ module.exports = function (app) {
             console.log("1. Defining contract name");
             newSmartContract = newSmartContract.replace(/@CONTRACT_NAME@/g, val);
 
-            // **************** 3. Defining contract instance object name
+            // **************** 2. Defining contract instance object name
+            console.log("2. Defining contract instance object name");
             newSmartContract = newSmartContract.replace(/@CONTRACT_NAME_LC@/g, val.toLowerCase());
 
-            // **************** 4. Set contract's initLedger structure
+            // **************** 3. Defining contracts's constant values
+            console.log("3. Defining contracts's constant values");
             newSmartContract = newSmartContract.replace(/@CONTRACT_NAME_UC@/g, val.toUpperCase());
 
             // Treat the first element as the Contract names and the rest as the fields name.
@@ -95,8 +129,8 @@ module.exports = function (app) {
 
             //console.log("newSmartContract after CONTRACT_NAME is [" + newSmartContract + "]");
 
-            // **************** 2. Defining contract's property structure
-            console.log("2. Defining contract's property structure");
+            // **************** 4. Defining contract's property structure
+            console.log("4. Defining contract's property structure");
 
             // Adding a new placeholder:            
             newSmartContract = newSmartContract.replace(/@NEW_CONTRACT_STRUCTURE@/g, CONST_CONTRACT_STRUCTURE_LINE + "\n	@NEW_CONTRACT_STRUCTURE@");
@@ -107,16 +141,17 @@ module.exports = function (app) {
             // Setting Contract's property name value: 
             newSmartContract = newSmartContract.replace(/@CONTRACT_PROPERTY_NAME_JSON@/g, val.toLowerCase());
 
-            // Assess if this is the last iteration and if so, remove new_item_line anchor.
-            if (++i == sContractsBody.length)
-                newSmartContract = newSmartContract.replace(/@NEW_CONTRACT_STRUCTURE@/g, "");
+            // Assess if this is the last iteration and if so, remove new_item_line anchors.
+            console.log("****** 1+Number(i) is [" + 1+Number(i) + "], sContractsBody.length is [" + sContractsBody.length + "], 1+Number(i) == sContractsBody.length is [" + (1+Number(i) == sContractsBody.length) + "]");
+            if (1 + Number(i) == sContractsBody.length) {
 
-            // **************** 5. Defining contracts's constant values
+                console.log("Yes Removing NEW_CONTRACT_STRUCTURE is set to true");
+
+                newSmartContract = newSmartContract.replace(/@NEW_CONTRACT_STRUCTURE@/g, "");
+                newSmartContract = newSmartContract.replace(/@NEW_INITLEDGER_CONTRACT_ITEM@/g, "");
+            }
 
         }
-
-
-
 
 
         //console.log("newSmartContract is [" + newSmartContract + "]");
@@ -133,5 +168,11 @@ module.exports = function (app) {
         // Returning result
         res.send(result);
     });
+
+    function getRandomData() {
+
+        var things = ['Rock', 'Paper', 'Scissor'];
+        return things[Math.floor(Math.random() * things.length)];
+    }
 
 };
