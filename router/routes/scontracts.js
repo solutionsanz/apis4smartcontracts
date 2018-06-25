@@ -58,23 +58,70 @@ module.exports = function (app) {
         }
 
         console.log("Inside GET scontracts");
+
+        /**
+         * @TODO: Replace all potential incoming spaces by _
+         */
+
         console.log("sContractsBody is [" + JSON.stringify(sContractsBody) + "]");
 
         // Reaplacing key properties in Smart Contract template:
         console.log("Replacing key values in Smart Contract");
+        var newSmartContract = origSmartContract;
+        var val = "";
+        var CONST_CONTRACT_STRUCTURE_LINE = '@CONTRACT_PROPERTY_NAME@   string `json:"@CONTRACT_PROPERTY_NAME_JSON@"`';
+
         for (var i in sContractsBody) {
-            console.log("Property [" + i + "], value is [" + sContractsBody[i].content + "]");
+            val = sContractsBody[i].content;
+            console.log("Property [" + i + "], value is [" + val + "]");
+
+            // **************** 1. Defining contract name
+            console.log("1. Defining contract name");
+            newSmartContract = newSmartContract.replace(/@CONTRACT_NAME@/g, val);
+
+            // **************** 3. Defining contract instance object name
+            newSmartContract = newSmartContract.replace(/@CONTRACT_NAME_LC@/g, val.toLowerCase());
+
+            // **************** 4. Set contract's initLedger structure
+            newSmartContract = newSmartContract.replace(/@CONTRACT_NAME_UC@/g, val.toUpperCase());
+
+            // Treat the first element as the Contract names and the rest as the fields name.
+            if (i == 0)
+                continue;
+
+            // var s = "type @CONTRACT_NAME@ struct {	";
+            // s = s.replace(/@CONTRACT_NAME@/g, val);
+            // console.log("s is [" + s + "]");
+
+            //console.log("newSmartContract after CONTRACT_NAME is [" + newSmartContract + "]");
+
+            // **************** 2. Defining contract's property structure
+            console.log("2. Defining contract's property structure");
+
+            // Adding a new placeholder:            
+            newSmartContract = newSmartContract.replace(/@NEW_CONTRACT_STRUCTURE@/g, CONST_CONTRACT_STRUCTURE_LINE + "\n	@NEW_CONTRACT_STRUCTURE@");
+
+            // Setting Contract's property name: 
+            newSmartContract = newSmartContract.replace(/@CONTRACT_PROPERTY_NAME@/g, val);
+
+            // Setting Contract's property name value: 
+            newSmartContract = newSmartContract.replace(/@CONTRACT_PROPERTY_NAME_JSON@/g, val.toLowerCase());
+
+            // Assess if this is the last iteration and if so, remove new_item_line anchor.
+            if (++i == sContractsBody.length)
+                newSmartContract = newSmartContract.replace(/@NEW_CONTRACT_STRUCTURE@/g, "");
+
+            // **************** 5. Defining contracts's constant values
+
         }
-        
 
 
 
-        // str.replace(/a/g, 'x');
 
 
-        //console.log("origSmartContract is [" + origSmartContract + "]");
+        //console.log("newSmartContract is [" + newSmartContract + "]");
         console.log("Base64 decoding Contract for ease of transformation");
-        b64SContract = Buffer.from(origSmartContract).toString('base64');
+        b64SContract = Buffer.from(newSmartContract).toString('base64');
 
         //console.log("b64SContract is [" + b64SContract + "]");
 
@@ -85,375 +132,6 @@ module.exports = function (app) {
 
         // Returning result
         res.send(result);
-
-
-
-        // if (appKey == null || appKey == undefined || collectionName == null || collectionName == undefined) {
-
-        //     log("GET", "/records", "Invalid API Key or Collection name. Verify and try again.");
-        //     res.status(400).end("Invalid API Key or Collection Name. Verify and try again."); //Bad request...
-        //     return;
-        // }
-
-
-        // var DB_COLLECTION_NAME = "" + appKey + "_" + collectionName;
-
-        // var filterName = req.query.filterName; //Field name to Search for Records.
-        // var filterValue = req.query.filterValue; //Field key-value to search for Records.
-
-        // var db = req.db;
-
-        // log("GET", "/records", "DB_COLLECTION_NAME [" + DB_COLLECTION_NAME + "]");
-        // var collection = db.get(DB_COLLECTION_NAME);
-
-        // var q = {};
-
-        // if ((filterName != null && filterName != undefined) &&
-        //     (filterValue == null || filterValue == undefined)) {
-
-        //     log("GET", "/records", "Filter by field name [ " + filterName +
-        //         "] present but no filterValue... Verify parameters and try again.");
-        //     res.status(400).end("Filter by field name [ " + filterName +
-        //         "] present but no filterValue... Verify parameters and try again."); //Bad request...
-        //     return;
-
-        // }
-
-        // // Just ensuring that optional filter criteria were used
-        // if (filterName != null && filterName != undefined &&
-        //     filterValue != null && filterValue != undefined) {
-
-        //     // Building query with given key-value pair:
-        //     q = '{\"' + filterName + '\":';
-
-        //     // Validating if Value is not a number to add quotes:
-        //     if (isNaN(filterValue)) {
-
-        //         q += '\"' + filterValue + '\"}';
-
-        //     } else {
-        //         q += '' + filterValue + '}';
-        //     } +
-        //     log("GET", "/records", "Applying Filter [" + q + "]");
-
-        //     q = JSON.parse(q);
-        //     log("GET", "/records", "Applying Filter [" + JSON.stringify(q) + "]");
-
-        // }
-
-        // collection.find(q, {}, function (e, docs) {
-
-        //     log("GET", "/records", "Found: [" + JSON.stringify({
-        //         "CollectionName": collectionName,
-        //         "Records": [docs]
-        //     }) + "]");
-
-
-        //     // In order to comply with the API documentation, 
-        //     // let's validate if an Array was return, in which
-        //     // case we simply return it.
-        //     // Otherwise we will create an array of 1 element
-        //     // in the response.
-        //     var result = {};
-        //     if (docs != null && docs != undefined && Array.isArray(docs)) {
-
-        //         result = {
-        //             "CollectionName": collectionName,
-        //             "Records": docs
-        //         };
-
-        //     } else {
-
-        //         result = {
-        //             "CollectionName": collectionName,
-        //             "Records": [docs]
-        //         };
-        //     }
-        //
-        //    // Returning result
-        //    res.send(result);
-        // });
-
     });
-
-    /* POST records */
-    app.post('/records', function (req, res) {
-
-        var appKey = req.get("x-api-key");
-        var collectionName = req.body.CollectionName;
-
-        console.log("x-api-key used is [" + appKey + "], collectionName is [" + collectionName + "]");
-
-        if (appKey == null || appKey == undefined || collectionName == null || collectionName == undefined) {
-
-            log("POST", "/records", "Invalid API Key or Collection name. Verify and try again.");
-            res.status(400).end("Invalid API Key or Collection Name. Verify and try again."); //Bad request...
-            return;
-        }
-
-        var DB_COLLECTION_NAME = "" + appKey + "_" + collectionName;
-
-        // Set our internal DB variable
-        var db = req.db;
-
-        // Retrieve Records to be inserted from Body:
-        var records = req.body.Records;
-
-        if (records == null || records == undefined) {
-            log("POST", "/records", "No Records detected... Please verify and try again.");
-            res.status(400).end("No Records detected... Please verify and try again."); //Bad request...
-            return;
-        }
-
-        log("POST", "/records", "Array of records to be inserted is [" + JSON.stringify(records) + "]");
-
-        // Set collection
-        log("POST", "/records", "DB_COLLECTION_NAME [" + DB_COLLECTION_NAME + "]");
-        var collection = db.get(DB_COLLECTION_NAME);
-
-        // Insert row to MongoDB
-        collection.insert(records, function (err, docs) {
-            if (err) {
-                log("POST", "/records", "Oops, something wrong just happened.");
-                res.send({
-                    Message: 'Oops, something wrong just happened. Please veify log files to determine cause.'
-                });
-            } else {
-
-                // It all worked! Let's return successful answer.
-                log("POST", "/records", "Records were added successfully...");
-
-                // In order to comply with the API documentation, 
-                // let's validate if an Array was return, in which
-                // case we simply return it.
-                // Otherwise we will create an array of 1 element
-                // in the response.
-                var result = {};
-                if (docs != null && docs != undefined && Array.isArray(docs)) {
-
-                    result = {
-                        "CollectionName": collectionName,
-                        "Records": docs
-                    };
-
-                } else {
-
-                    result = {
-                        "CollectionName": collectionName,
-                        "Records": [docs]
-                    };
-                }
-
-                // Returning result
-                res.send(result);
-
-            }
-        });
-    });
-
-
-    /* Delete Record by Id(s) */
-    app.delete('/records/:id', function (req, res) {
-
-        var appKey = req.get("x-api-key");
-        var collectionName = req.query.collectionName;
-        var currId = req.params.id;
-
-        console.log("x-api-key used is [" + appKey + "], collectionName is [" + collectionName + "], id or record to be removed [" + currId + "]");
-
-        if (appKey == null || appKey == undefined || collectionName == null ||
-            collectionName == undefined || currId == null || currId == undefined) {
-
-            log("DELETE", "/records", "Invalid or empty API Key, Collection name or id. Verify and try again.");
-            res.status(400).end("Invalid or empty API Key, Collection name or id. Verify and try again."); //Bad request...
-            return;
-        }
-
-        var DB_COLLECTION_NAME = "" + appKey + "_" + collectionName;
-
-        var db = req.db;
-
-        log("DELETE", "/records", "DB_COLLECTION_NAME [" + DB_COLLECTION_NAME + "]");
-
-        var collection = db.get(DB_COLLECTION_NAME);
-
-        log("DELETE", "/records", "Record to be removed by Id [" + currId + "]");
-
-        //Remove record by id:
-        try {
-            collection.remove({
-                "_id": currId
-            });
-        } catch (err) {
-
-            log("DELETE", "/records", "Error while trying to delete _id [" + currId + "]");
-            log("DELETE", "/records", "Error is [" + err.message + "] ");
-
-            res.status(500).end("Error while trying to delete _id [" + currId + "] - Verify log files to determine cause."); //Bad request...
-            return;
-
-        }
-
-        // Returning result
-        res.send({
-            "_id": currId
-        });
-
-    });
-
-
-    /* Delete Record by Id(s) */
-    app.post('/records/bulk/delete', function (req, res) {
-
-        var appKey = req.get("x-api-key");
-        var collectionName = req.body.CollectionName;
-
-        console.log("x-api-key used is [" + appKey + "], collectionName is [" + collectionName + "]");
-
-        if (appKey == null || appKey == undefined || collectionName == null || collectionName == undefined) {
-
-            log("DELETE", "/records", "Invalid or empty API Key, Collection name or id. Verify and try again.");
-            res.status(400).end("Invalid or empty API Key, Collection name or id. Verify and try again."); //Bad request...
-            return;
-        }
-
-        var DB_COLLECTION_NAME = "" + appKey + "_" + collectionName;
-
-        var ids = req.body.ListIdRecords;
-
-
-        // In order to comply with the API documentation, 
-        // let's validate if an Array was return, in which
-        // case we simply return it.
-        // Otherwise we will create an array of 1 element
-        // in the response.
-
-        var result = {
-            "CollectionName": collectionName,
-            "ListIdRecords": []
-        };
-
-        if (ids == null || ids == undefined || !Array.isArray(ids)) {
-
-            log("DELETE", "/records", "Invalid or Empty array of IDs of records to be " +
-                "removed. Verify and try again.");
-            res.status(400).end("Invalid or Empty array of IDs of records to be removed. " +
-                "Verify and try again."); //Bad request...
-            return;
-        }
-
-        var db = req.db;
-
-        log("DELETE", "/records", "DB_COLLECTION_NAME [" + DB_COLLECTION_NAME + "]");
-        var collection = db.get(DB_COLLECTION_NAME);
-
-        for (var i = 0; i < ids.length; ++i) {
-
-            var currId = ids[i]._id;
-
-
-            log("DELETE", "/records", "Record to be removed by Id [" + currId + "]");
-
-            //Remove record by id:
-            try {
-                collection.remove({
-                    "_id": currId
-                });
-            } catch (err) {
-
-                log("DELETE", "/records", "Error while trying to delete _id [" + currId + "]");
-                log("DELETE", "/records", "Error is [" + err.message + "] ");
-
-                // Force skipping push into result
-                continue;
-            }
-
-            // Let's add this id to the list of successfully deleted records:
-
-            result.ListIdRecords.push({
-                "_id": currId
-            });
-        }
-
-        // It all worked! Let's return successful answer.
-        log("DELETE", "/records", "Records [" + JSON.stringify(result) + "] were deleted successfully...");
-
-
-
-
-        // Returning result
-        res.send(result);
-
-    });
-
-
-
-    /**
-     * Receive CSV File to be converted into JSON and stored as a Collection in DB
-     * 
-     */
-    app.post('/ws/uploadfile', function (req, res) {
-
-        console.log("*** Reading uploaded CSV file...");
-        var form = new formidable.IncomingForm();
-        var tempFile;
-        form.parse(req, function (err, fields, files) {
-
-            if (err) throw err;
-
-            tempFile = files.file.path;
-            var fileName = files.file.name;
-
-            console.log("Temp uploaded file is [" + JSON.stringify(tempFile) + "], name is [" + fileName + "]");
-            // e.g. /tmp/upload_6f97da965ddff07a670e738c046704cb
-            fid = tempFile.split("/")[2];
-            console.log("File id is [" + fid + "]");
-
-            // res.writeHead(200, {
-            //     'content-type': 'text/plain'
-            // });
-            // res.write('received upload:\n\n');
-            // res.end(util.inspect({
-            //     fields: fields,
-            //     files: files
-            // }));
-
-            var fid = {
-                fid: fid
-            };
-
-            res.write(JSON.stringify(fid));
-            res.end();
-        });
-
-    });
-
-    app.get('/csv2json/:fid', function (req, res) {
-
-        var fid = req.params.fid;
-
-        if (fid == null || fid == undefined) {
-            res.status(400).end("File Id is empty or invalid... Nothing to do..."); //Bad request...
-            return;
-        }
-
-        var tempFile = "/tmp/" + fid;
-
-        console.log("*** Converting CSV to JSON...");
-        // create a new converter object
-        var converter = new Converter({});
-
-        console.log("File to read is [" + tempFile + "]");
-        converter.fromFile(tempFile).then((jsonObj) => {
-            console.log(jsonObj);
-            res.write(JSON.stringify(jsonObj));
-            res.end();
-        });
-
-
-
-
-    });
-
 
 };

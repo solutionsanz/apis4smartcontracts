@@ -42,16 +42,13 @@ import (
 type SmartContract struct {
 }
 
-// Define the car structure, with 4 properties.  Structure tags are used by encoding/json library
-type Car struct {
-	Make   string `json:"make"`
-	Model  string `json:"model"`
-	Colour string `json:"colour"`
-	Owner  string `json:"owner"`
+// Define the @CONTRACT_NAME_LC@ structure, with 4 properties.  Structure tags are used by encoding/json library
+type @CONTRACT_NAME@ struct {	
+	@NEW_CONTRACT_STRUCTURE@
 }
 
 /*
- * The Init method is called when the Smart Contract "fabcar" is instantiated by the blockchain network
+ * The Init method is called when the Smart Contract "fab@CONTRACT_NAME_LC@" is instantiated by the blockchain network
  * Best practice is to have any Ledger initialization in separate function -- see initLedger()
  */
 func (s *SmartContract) Init(APIstub shim.ChaincodeStubInterface) sc.Response {
@@ -59,7 +56,7 @@ func (s *SmartContract) Init(APIstub shim.ChaincodeStubInterface) sc.Response {
 }
 
 /*
- * The Invoke method is called as a result of an application request to run the Smart Contract "fabcar"
+ * The Invoke method is called as a result of an application request to run the Smart Contract "fab@CONTRACT_NAME_LC@"
  * The calling application program has also specified the particular smart contract function to be called, with arguments
  */
 func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response {
@@ -67,75 +64,75 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 	// Retrieve the requested Smart Contract function and arguments
 	function, args := APIstub.GetFunctionAndParameters()
 	// Route to the appropriate handler function to interact with the ledger appropriately
-	if function == "queryCar" {
-		return s.queryCar(APIstub, args)
+	if function == "query@CONTRACT_NAME@" {
+		return s.query@CONTRACT_NAME@(APIstub, args)
 	} else if function == "initLedger" {
 		return s.initLedger(APIstub)
-	} else if function == "createCar" {
-		return s.createCar(APIstub, args)
-	} else if function == "queryAllCars" {
-		return s.queryAllCars(APIstub)
-	} else if function == "changeCarOwner" {
-		return s.changeCarOwner(APIstub, args)
+	} else if function == "create@CONTRACT_NAME@" {
+		return s.create@CONTRACT_NAME@(APIstub, args)
+	} else if function == "queryAll@CONTRACT_NAME@s" {
+		return s.queryAll@CONTRACT_NAME@s(APIstub)
+	} else if function == "change@CONTRACT_NAME@Owner" {
+		return s.change@CONTRACT_NAME@Owner(APIstub, args)
 	}
 
 	return shim.Error("Invalid Smart Contract function name.")
 }
 
-func (s *SmartContract) queryCar(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+func (s *SmartContract) query@CONTRACT_NAME@(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
 	if len(args) != 1 {
 		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
 
-	carAsBytes, _ := APIstub.GetState(args[0])
-	return shim.Success(carAsBytes)
+	@CONTRACT_NAME_LC@AsBytes, _ := APIstub.GetState(args[0])
+	return shim.Success(@CONTRACT_NAME_LC@AsBytes)
 }
 
 func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Response {
-	cars := []Car{
-		Car{Make: "Toyota", Model: "Prius", Colour: "blue", Owner: "Tomoko"},
-		Car{Make: "Ford", Model: "Mustang", Colour: "red", Owner: "Brad"},
-		Car{Make: "Hyundai", Model: "Tucson", Colour: "green", Owner: "Jin Soo"},
-		Car{Make: "Volkswagen", Model: "Passat", Colour: "yellow", Owner: "Max"},
-		Car{Make: "Tesla", Model: "S", Colour: "black", Owner: "Adriana"},
-		Car{Make: "Peugeot", Model: "205", Colour: "purple", Owner: "Michel"},
-		Car{Make: "Chery", Model: "S22L", Colour: "white", Owner: "Aarav"},
-		Car{Make: "Fiat", Model: "Punto", Colour: "violet", Owner: "Pari"},
-		Car{Make: "Tata", Model: "Nano", Colour: "indigo", Owner: "Valeria"},
-		Car{Make: "Holden", Model: "Barina", Colour: "brown", Owner: "Shotaro"},
+	@CONTRACT_NAME_LC@s := []@CONTRACT_NAME@{
+		@CONTRACT_NAME@{Make: "Toyota", Model: "Prius", Colour: "blue", Owner: "Tomoko"},
+		@CONTRACT_NAME@{Make: "Ford", Model: "Mustang", Colour: "red", Owner: "Brad"},
+		@CONTRACT_NAME@{Make: "Hyundai", Model: "Tucson", Colour: "green", Owner: "Jin Soo"},
+		@CONTRACT_NAME@{Make: "Volkswagen", Model: "Passat", Colour: "yellow", Owner: "Max"},
+		@CONTRACT_NAME@{Make: "Tesla", Model: "S", Colour: "black", Owner: "Adriana"},
+		@CONTRACT_NAME@{Make: "Peugeot", Model: "205", Colour: "purple", Owner: "Michel"},
+		@CONTRACT_NAME@{Make: "Chery", Model: "S22L", Colour: "white", Owner: "Aarav"},
+		@CONTRACT_NAME@{Make: "Fiat", Model: "Punto", Colour: "violet", Owner: "Pari"},
+		@CONTRACT_NAME@{Make: "Tata", Model: "Nano", Colour: "indigo", Owner: "Valeria"},
+		@CONTRACT_NAME@{Make: "Holden", Model: "Barina", Colour: "brown", Owner: "Shotaro"},
 	}
 
 	i := 0
-	for i < len(cars) {
+	for i < len(@CONTRACT_NAME_LC@s) {
 		fmt.Println("i is ", i)
-		carAsBytes, _ := json.Marshal(cars[i])
-		APIstub.PutState("CAR"+strconv.Itoa(i), carAsBytes)
-		fmt.Println("Added", cars[i])
+		@CONTRACT_NAME_LC@AsBytes, _ := json.Marshal(@CONTRACT_NAME_LC@s[i])
+		APIstub.PutState("@CONTRACT_NAME_UC@"+strconv.Itoa(i), @CONTRACT_NAME_LC@AsBytes)
+		fmt.Println("Added", @CONTRACT_NAME_LC@s[i])
 		i = i + 1
 	}
 
 	return shim.Success(nil)
 }
 
-func (s *SmartContract) createCar(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+func (s *SmartContract) create@CONTRACT_NAME@(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
 	if len(args) != 5 {
 		return shim.Error("Incorrect number of arguments. Expecting 5")
 	}
 
-	var car = Car{Make: args[1], Model: args[2], Colour: args[3], Owner: args[4]}
+	var @CONTRACT_NAME_LC@ = @CONTRACT_NAME@{Make: args[1], Model: args[2], Colour: args[3], Owner: args[4]}
 
-	carAsBytes, _ := json.Marshal(car)
-	APIstub.PutState(args[0], carAsBytes)
+	@CONTRACT_NAME_LC@AsBytes, _ := json.Marshal(@CONTRACT_NAME_LC@)
+	APIstub.PutState(args[0], @CONTRACT_NAME_LC@AsBytes)
 
 	return shim.Success(nil)
 }
 
-func (s *SmartContract) queryAllCars(APIstub shim.ChaincodeStubInterface) sc.Response {
+func (s *SmartContract) queryAll@CONTRACT_NAME@s(APIstub shim.ChaincodeStubInterface) sc.Response {
 
-	startKey := "CAR0"
-	endKey := "CAR999"
+	startKey := "@CONTRACT_NAME_UC@0"
+	endKey := "@CONTRACT_NAME_UC@999"
 
 	resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
 	if err != nil {
@@ -170,25 +167,25 @@ func (s *SmartContract) queryAllCars(APIstub shim.ChaincodeStubInterface) sc.Res
 	}
 	buffer.WriteString("]")
 
-	fmt.Printf("- queryAllCars:\n%s\n", buffer.String())
+	fmt.Printf("- queryAll@CONTRACT_NAME@s:\n%s\n", buffer.String())
 
 	return shim.Success(buffer.Bytes())
 }
 
-func (s *SmartContract) changeCarOwner(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+func (s *SmartContract) change@CONTRACT_NAME@Owner(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
 	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments. Expecting 2")
 	}
 
-	carAsBytes, _ := APIstub.GetState(args[0])
-	car := Car{}
+	@CONTRACT_NAME_LC@AsBytes, _ := APIstub.GetState(args[0])
+	@CONTRACT_NAME_LC@ := @CONTRACT_NAME@{}
 
-	json.Unmarshal(carAsBytes, &car)
-	car.Owner = args[1]
+	json.Unmarshal(@CONTRACT_NAME_LC@AsBytes, &@CONTRACT_NAME_LC@)
+	@CONTRACT_NAME_LC@.Owner = args[1]
 
-	carAsBytes, _ = json.Marshal(car)
-	APIstub.PutState(args[0], carAsBytes)
+	@CONTRACT_NAME_LC@AsBytes, _ = json.Marshal(@CONTRACT_NAME_LC@)
+	APIstub.PutState(args[0], @CONTRACT_NAME_LC@AsBytes)
 
 	return shim.Success(nil)
 }
