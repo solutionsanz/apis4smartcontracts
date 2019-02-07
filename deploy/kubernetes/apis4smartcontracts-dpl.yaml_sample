@@ -30,22 +30,9 @@ spec:
           value: "lbaas.xxxx.xxx"
         - name: API_GW_BASEURL
           value: "/apis4smartcontracts"
-        - name: NODE_ORACLEDB_USER
-          value: "[Enter ATP Gifts DB username, e.g. gifts_admin]"
-        - name: NODE_ORACLEDB_PASSWORD
-          value: "[Enter ATP Gifts DB password, e.g. Welcome1#Welcome1#]"
-        - name: NODE_ORACLEDB_CONNECTIONSTRING
-          value: "[Enter ATP Gifts DB TNS Name, e.g. critestoltp1_low]"
         - name: PORT
           value: "3000"                    
         ports:
         - containerPort: 3000
-        volumeMounts:
-          - name: oke-autdb-persistent-storage
-            mountPath: /var/lib/cri
       imagePullSecrets:
       - name: ocir-reg
-      volumes:
-        - name: oke-autdb-persistent-storage
-          persistentVolumeClaim:
-            claimName: okeautdbpvc
