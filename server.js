@@ -119,7 +119,7 @@ app.get('/acorn-apis/v1', function (req, res) {
 });
 
 app.use('/', express.static(path.join(__dirname, 'swagger-dist')));
-app.use('/ws', express.static(path.join(__dirname, 'public')));
+app.use('/bc', express.static(path.join(__dirname, 'public')));
 //app.use('/upload', express.static(path.join(__dirname, 'public', 'upload.html')));
 
 

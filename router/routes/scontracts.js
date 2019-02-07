@@ -42,7 +42,7 @@ module.exports = function (app) {
      */
 
     /* POST Smart Contract */
-    app.post('/ws/scontracts', function (req, res) {
+    app.post('/bc/scontracts', function (req, res) {
 
         // console.log(util.inspect({
         //          req: req
