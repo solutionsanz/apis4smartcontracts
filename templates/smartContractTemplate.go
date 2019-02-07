@@ -74,7 +74,10 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.queryAll@CONTRACT_NAME@s(APIstub)
 	} else if function == "change@CONTRACT_NAME@Owner" {
 		return s.change@CONTRACT_NAME@Owner(APIstub, args)
-	}
+	} else if function == "getHistoryFor@CONTRACT_NAME@" {
+        return s.getHistoryFor@CONTRACT_NAME@(APIstub, args)
+    }
+
 
 	return shim.Error("Invalid Smart Contract function name.")
 }
@@ -180,6 +183,76 @@ func (s *SmartContract) change@CONTRACT_NAME@Owner(APIstub shim.ChaincodeStubInt
 
 	return shim.Success(nil)
 }
+
+
+// ===========================================================================================
+// getHistoryFor@CONTRACT_NAME@ returns the histotical state transitions for a given key of a record
+// ===========================================================================================
+func  (s *SmartContract) getHistoryFor@CONTRACT_NAME@(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+    
+    if len(args) < 1 {
+        return shim.Error("Incorrect number of arguments. Expecting 1")
+    }
+
+    recordKey := args[0]
+
+    fmt.Printf("- start getHistoryFor@CONTRACT_NAME@: %s\n", recordKey)
+    
+    resultsIterator, err := APIstub.GetHistoryForKey(recordKey)
+    if err != nil {
+        return shim.Error(err.Error())
+    }
+    defer resultsIterator.Close()
+
+    // buffer is a JSON array containing historic values for the key/value pair
+    var buffer bytes.Buffer
+    buffer.WriteString("[")
+
+    bArrayMemberAlreadyWritten := false
+    for resultsIterator.HasNext() {
+        response, err := resultsIterator.Next()
+        if err != nil {
+            return shim.Error(err.Error())
+        }
+        // Add a comma before array members, suppress it for the first array member
+        if bArrayMemberAlreadyWritten == true {
+            buffer.WriteString(",")
+        }
+        buffer.WriteString("{\"TxId\":")
+        buffer.WriteString("\"")
+        buffer.WriteString(response.TxId)
+        buffer.WriteString("\"")
+
+        buffer.WriteString(", \"Value\":")
+        // if it was a delete operation on given key, then we need to set the
+        //corresponding value null. Else, we will write the response.Value
+        //as-is (as the Value itself a JSON vehiclePart)
+        if response.IsDelete {
+            buffer.WriteString("null")
+        } else {
+            buffer.WriteString(string(response.Value))
+        }
+
+        buffer.WriteString(", \"Timestamp\":")
+        buffer.WriteString("\"")
+        buffer.WriteString(time.Unix(response.Timestamp.Seconds, int64(response.Timestamp.Nanos)).String())
+        buffer.WriteString("\"")
+
+        buffer.WriteString(", \"IsDelete\":")
+        buffer.WriteString("\"")
+        buffer.WriteString(strconv.FormatBool(response.IsDelete))
+        buffer.WriteString("\"")
+
+        buffer.WriteString("}")
+        bArrayMemberAlreadyWritten = true
+    }
+    buffer.WriteString("]")
+
+    fmt.Printf("- getHistoryFor@CONTRACT_NAME@ returning:\n%s\n", buffer.String())
+
+    return shim.Success(buffer.Bytes())
+}
+
 
 // The main function is only relevant in unit test mode. Only included here for completeness.
 func main() {

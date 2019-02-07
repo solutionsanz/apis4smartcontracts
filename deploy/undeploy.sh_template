@@ -1,0 +1,10 @@
+#!/bin/bash
+#microservices..
+  #apis4smartcontracts..
+  kubectl delete -f kubernetes/apis4smartcontracts-ing.yaml
+  kubectl delete -f kubernetes/apis4smartcontracts-svc.yaml
+  kubectl delete -f kubernetes/apis4smartcontracts-dpl.yaml
+  kubectl delete secret ocir-reg --namespace=apis4smartcontracts
+  kubectl delete namespace apis4smartcontracts
+
+  #kubectl delete -f kubernetes/apis4smartcontracts-pvc.yaml

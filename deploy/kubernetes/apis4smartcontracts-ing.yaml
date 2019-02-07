@@ -1,17 +1,17 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: acorningress
+  name: apis4smartcontractsingress
   annotations:
     kubernetes.io/ingress.class: traefik
     traefik.frontend.rule.type: PathPrefixStrip
-  namespace: acorn      
+  namespace: apis4smartcontracts      
 spec:
   rules:
   - host:
     http:
       paths:
-      - path: /acorn
+      - path: /apis4smartcontracts
         backend:
-          serviceName: acornservice
+          serviceName: apis4smartcontractsservice
           servicePort: http
