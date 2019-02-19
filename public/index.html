@@ -1,56 +1,56 @@
 <html>
+
 <head>
-<meta charset="utf-8">
-<title>Drag and drop</title>
-<link rel="icon" href="img/favicon.png" type="image/x-icon" />
-<link href="css/style.css" rel="stylesheet" media="all">
+	<meta charset="utf-8">
+	<title>Drag and drop</title>
+	<link rel="icon" href="img/favicon.png" type="image/x-icon" />
+	<link href="css/style.css" rel="stylesheet" media="all">
 </head>
 
 <body>
-<div class="gs-logo"><img src="img/o.jpg" /></div>
-<h1 class="gs-title">Create Blockchain Smart Contracts</h1>
-<div class="gs-drag-and-drop-container">
+	<div class="gs-logo"><img src="img/o.jpg" /></div>
+	<h1 class="gs-title">Create Blockchain Smart Contracts</h1>
+	<div class="gs-drag-and-drop-container">
 
-    <div class="gs-drag-and-drop">
-    	<div class="gs-drag-and-drop-title">Describe your smart contract:</div>
-        <ul id="draggable-elements6">
-            <li data-id="0"><input type="text" value="Contract_Name" name="" readonly disabled></li>
-            <li data-id="1"><input type="text" value="Property_1" name="" readonly disabled></li>
-            <li data-id="2"><input type="text" value="Property_2" name="" readonly disabled></li>
-			<li data-id="3"><input type="text" value="Property_3" name="" readonly disabled></li>
-			<li data-id="4"><input type="text" value="Property_4" name="" readonly disabled></li>
-        </ul>
-        <div class="gs-add-item">
-        	<input type="text" value="" name="gs-add-item">
-            <a href="javascript:;">Add</a>
-            <div class="gs-error-message">Please add a value</div>
-        </div>
-        <div class="gs-succes-message">
-			Smart Contract created!
+		<div class="gs-drag-and-drop">
+			<div class="gs-drag-and-drop-title">Describe your smart contract:</div>
+			<ul id="draggable-elements6">
+				<li data-id="0"><input type="text" value="Contract_Name" name="" readonly disabled></li>
+				<li data-id="1"><input type="text" value="Property_1" name="" readonly disabled></li>
+				<li data-id="2"><input type="text" value="Property_2" name="" readonly disabled></li>
+				<li data-id="3"><input type="text" value="Property_3" name="" readonly disabled></li>
+				<li data-id="4"><input type="text" value="Property_4" name="" readonly disabled></li>
+			</ul>
+			<div class="gs-add-item">
+				<input type="text" value="" name="gs-add-item">
+				<a href="javascript:;">Add</a>
+				<div class="gs-error-message">Please add a value</div>
+			</div>
+			<div class="gs-succes-message">
+				Smart Contract created!
+			</div>
+			<br>
+			<textarea readonly style="display: none;" cols="50" class="form-control" name="contractValue" id="contractValue"></textarea>
 		</div>
-		<br>
-		<textarea readonly style="display: none;"  cols="50" class="form-control" name="contractValue" id="contractValue"></textarea>
-    </div>
-</div>
-<script type="text/javascript" src="js/gs-drag-drop.js"></script>
-<script>
-
-	new GsDraggable('draggable-elements6', {
-		save: true,
-		onSave: function(){ 
-			var message = document.querySelector('#draggable-elements6').parentNode.querySelector('.gs-succes-message');
+	</div>
+	<script type="text/javascript" src="js/gs-drag-drop.js"></script>
+	<script>
+		new GsDraggable('draggable-elements6', {
+			save: true,
+			onSave: function () {
+				var message = document.querySelector('#draggable-elements6').parentNode.querySelector('.gs-succes-message');
 				message.style.display = 'block';
 
-			setTimeout(function(){
-				message.style.display = 'none';
-			}, 5000)
-		},
-		useHandler: true, 
-		generateHandler: true,
-		editItem:true,
-		deleteItem: true
-	});
-</script>
+				setTimeout(function () {
+					message.style.display = 'none';
+				}, 5000)
+			},
+			useHandler: true,
+			generateHandler: true,
+			editItem: true,
+			deleteItem: true
+		});
+	</script>
 
 	<!-- jQuery Library -->
 	<script src="js/jquery-3.1.1.min.js"></script>
@@ -61,4 +61,5 @@
 		console.log("Loading upload function");
 	</script>
 </body>
+
 </html>

@@ -59,11 +59,20 @@ module.exports = function (app) {
 
         console.log("Inside GET scontracts");
 
-        /**
-         * @TODO: Replace all potential incoming spaces by _
-         */
 
         console.log("sContractsBody is [" + JSON.stringify(sContractsBody) + "]");
+
+
+        /**
+         * Replace all potential incoming spaces by _
+         */
+        for (var i in sContractsBody) {
+
+
+            val = sContractsBody[i].content;
+            log("POST", "/scontracts", "val is [" + val + "]");
+            sContractsBody[i].content = val.replace(/\s+/g, "_");
+        }
 
         // Reaplacing key properties in Smart Contract template:
         console.log("Replacing key values in Smart Contract");
@@ -72,6 +81,8 @@ module.exports = function (app) {
 
         var CONST_CONTRACT_STRUCTURE_LINE = '@CONTRACT_PROPERTY_NAME@   string `json:"@CONTRACT_PROPERTY_NAME_JSON@"`';
         var CONST_INITLEDGER_CONTRACT_STRUCTURE_LINE = '@CONTRACT_NAME@';
+        var CONST_CONTRACT_ITEM_RECORD_STRUCTURE_LINE = '@CONTRACT_NAME_LC@';
+        var CONST_CREATE_NEW_RECORD_LINE = {};
 
         /**
          * Setting default random Contract's Init Ledger data
@@ -79,7 +90,7 @@ module.exports = function (app) {
         // **************** Set contract's initLedger structure
         console.log("Set contract's initLedger structure");
 
-        for (var x = 0; x < 10; ++x) {
+        for (var x = 0; x < 3; ++x) { // Initiating with 3 elements, i.e. each with all its contract fields... 
 
             var sContractParamsJSON = {};
 
@@ -90,15 +101,49 @@ module.exports = function (app) {
                     continue;
 
                 val = sContractsBody[i].content;
-                sContractParamsJSON[val] = getRandomData();
+                sContractParamsJSON[val] = "##" + getRandomData() + "##";
             }
 
             console.log("Random InitLedger Structure is [" + JSON.stringify(sContractParamsJSON) + "]");
             // Adding a new placeholder:
-            newSmartContract = newSmartContract.replace(/@NEW_INITLEDGER_CONTRACT_ITEM@/g, CONST_INITLEDGER_CONTRACT_STRUCTURE_LINE + JSON.stringify(sContractParamsJSON) + "," + "\n		@NEW_INITLEDGER_CONTRACT_ITEM@");
+            // Escaping the JSON string representation by removing double quotes from element names:
+            var strsContractParamsJSON = JSON.stringify(sContractParamsJSON).replace(/"/g, "").replace(/##/g, "\"");
+            newSmartContract = newSmartContract.replace(/@NEW_INITLEDGER_CONTRACT_ITEM@/g, CONST_INITLEDGER_CONTRACT_STRUCTURE_LINE + strsContractParamsJSON + "," + "\n		@NEW_INITLEDGER_CONTRACT_ITEM@");
 
         }
 
+        /**
+         * Setting default random Contract's recordXXXAction based on initial selected parameters in contract
+         */
+        console.log("Set contract's recordXXXAction structure");
+
+        // Now, creating list of contract elements for createXXX and recordXXXAction:
+        var sContractParamsJSON = {};
+
+        for (var i in sContractsBody) {
+
+            // Treat the first element as the Contract names and the rest as the fields name.
+            if (i == 0)
+                continue;            
+
+            var x = i - 1;
+            val = sContractsBody[i].content;
+            args = "args[" + x + "]";
+
+            recordField = "." + val + " = " + args;
+            sContractParamsJSON[val] = args;
+
+
+            // Adding a new placeholder:
+            newSmartContract = newSmartContract.replace(/@CONTRACT_ITEM_RECORD@/g, CONST_CONTRACT_ITEM_RECORD_STRUCTURE_LINE + recordField + "\n	@CONTRACT_ITEM_RECORD@");
+
+        }
+
+        // Replacing a complete record line with all its attributes:
+        // Escaping double quotes:
+        var strsContractParamsJSON = JSON.stringify(sContractParamsJSON).replace(/"/g, "");
+        newSmartContract = newSmartContract.replace(/@CONST_CREATE_NEW_RECORD_LINE@/g, strsContractParamsJSON);
+        
 
         /**
          * Setting default Contract's name and properties
@@ -141,14 +186,18 @@ module.exports = function (app) {
             // Setting Contract's property name value: 
             newSmartContract = newSmartContract.replace(/@CONTRACT_PROPERTY_NAME_JSON@/g, val.toLowerCase());
 
+            // Setting @NUMBER_OF_CONTRACT_ITEMS@:
+            newSmartContract = newSmartContract.replace(/@NUMBER_OF_CONTRACT_ITEMS@/g, sContractsBody.length - 1);
+
             // Assess if this is the last iteration and if so, remove new_item_line anchors.
-            console.log("****** 1+Number(i) is [" + 1+Number(i) + "], sContractsBody.length is [" + sContractsBody.length + "], 1+Number(i) == sContractsBody.length is [" + (1+Number(i) == sContractsBody.length) + "]");
+            console.log("****** 1+Number(i) is [" + 1 + Number(i) + "], sContractsBody.length is [" + sContractsBody.length + "], 1+Number(i) == sContractsBody.length is [" + (1 + Number(i) == sContractsBody.length) + "]");
             if (1 + Number(i) == sContractsBody.length) {
 
                 console.log("Yes Removing NEW_CONTRACT_STRUCTURE is set to true");
 
                 newSmartContract = newSmartContract.replace(/@NEW_CONTRACT_STRUCTURE@/g, "");
                 newSmartContract = newSmartContract.replace(/@NEW_INITLEDGER_CONTRACT_ITEM@/g, "");
+                newSmartContract = newSmartContract.replace(/@CONTRACT_ITEM_RECORD@/g, "");
             }
 
         }

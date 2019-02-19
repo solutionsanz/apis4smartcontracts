@@ -43,13 +43,17 @@ import (
 type SmartContract struct {
 }
 
-// Define the @CONTRACT_NAME_LC@ structure, with 4 properties.  Structure tags are used by encoding/json library
-type @CONTRACT_NAME@ struct {	
-	@NEW_CONTRACT_STRUCTURE@
+// Define the poi structure, with 4 properties.  Structure tags are used by encoding/json library
+type POI struct {	
+	PersonID   string `json:"personid"`
+	Person   string `json:"person"`
+	Action   string `json:"action"`
+	Location   string `json:"location"`
+	
 }
 
 /*
- * The Init method is called when the Smart Contract "fab@CONTRACT_NAME_LC@" is instantiated by the blockchain network
+ * The Init method is called when the Smart Contract "fabpoi" is instantiated by the blockchain network
  * Best practice is to have any Ledger initialization in separate function -- see initLedger()
  */
 func (s *SmartContract) Init(APIstub shim.ChaincodeStubInterface) sc.Response {
@@ -57,7 +61,7 @@ func (s *SmartContract) Init(APIstub shim.ChaincodeStubInterface) sc.Response {
 }
 
 /*
- * The Invoke method is called as a result of an application request to run the Smart Contract "fab@CONTRACT_NAME_LC@"
+ * The Invoke method is called as a result of an application request to run the Smart Contract "fabpoi"
  * The calling application program has also specified the particular smart contract function to be called, with arguments
  */
 func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response {
@@ -65,16 +69,16 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 	// Retrieve the requested Smart Contract function and arguments
 	function, args := APIstub.GetFunctionAndParameters()
 	// Route to the appropriate handler function to interact with the ledger appropriately
-	if function == "query@CONTRACT_NAME@" {
-		return s.query@CONTRACT_NAME@(APIstub, args)
+	if function == "queryPOI" {
+		return s.queryPOI(APIstub, args)
 	} else if function == "initLedger" {
 		return s.initLedger(APIstub)
-	} else if function == "create@CONTRACT_NAME@" {
-		return s.create@CONTRACT_NAME@(APIstub, args)
-	} else if function == "queryAll@CONTRACT_NAME@s" {
-		return s.queryAll@CONTRACT_NAME@s(APIstub)
-	} else if function == "record@CONTRACT_NAME@Action" {
-		return s.record@CONTRACT_NAME@Action(APIstub, args)
+	} else if function == "createPOI" {
+		return s.createPOI(APIstub, args)
+	} else if function == "queryAllPOIs" {
+		return s.queryAllPOIs(APIstub)
+	} else if function == "recordPOIAction" {
+		return s.recordPOIAction(APIstub, args)
 	} else if function == "getHistoryForRecord" {
         return s.getHistoryForRecord(APIstub, args)
     }
@@ -83,51 +87,54 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 	return shim.Error("Invalid Smart Contract function name.")
 }
 
-func (s *SmartContract) query@CONTRACT_NAME@(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+func (s *SmartContract) queryPOI(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
 	if len(args) != 1 {
 		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
 
-	@CONTRACT_NAME_LC@AsBytes, _ := APIstub.GetState(args[0])
-	return shim.Success(@CONTRACT_NAME_LC@AsBytes)
+	poiAsBytes, _ := APIstub.GetState(args[0])
+	return shim.Success(poiAsBytes)
 }
 
 func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Response {
-	@CONTRACT_NAME_LC@s := []@CONTRACT_NAME@{
-		@NEW_INITLEDGER_CONTRACT_ITEM@
+	pois := []POI{
+		POI{PersonID:"Rock",Person:"Scissor",Action:"Scissor",Location:"Paper"},
+		POI{PersonID:"Scissor",Person:"Scissor",Action:"Rock",Location:"Scissor"},
+		POI{PersonID:"Rock",Person:"Rock",Action:"Paper",Location:"Rock"},
+		
 	}
 
 	i := 0
-	for i < len(@CONTRACT_NAME_LC@s) {
+	for i < len(pois) {
 		fmt.Println("i is ", i)
-		@CONTRACT_NAME_LC@AsBytes, _ := json.Marshal(@CONTRACT_NAME_LC@s[i])
-		APIstub.PutState("@CONTRACT_NAME_UC@"+strconv.Itoa(i), @CONTRACT_NAME_LC@AsBytes)
-		fmt.Println("Added", @CONTRACT_NAME_LC@s[i])
+		poiAsBytes, _ := json.Marshal(pois[i])
+		APIstub.PutState("POI"+strconv.Itoa(i), poiAsBytes)
+		fmt.Println("Added", pois[i])
 		i = i + 1
 	}
 
 	return shim.Success(nil)
 }
 
-func (s *SmartContract) create@CONTRACT_NAME@(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+func (s *SmartContract) createPOI(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
-	if len(args) != @NUMBER_OF_CONTRACT_ITEMS@ {
-		return shim.Error("Incorrect number of arguments. Expecting @NUMBER_OF_CONTRACT_ITEMS@")
+	if len(args) != 4 {
+		return shim.Error("Incorrect number of arguments. Expecting 4")
 	}
 
-	var @CONTRACT_NAME_LC@ = @CONTRACT_NAME@@CONST_CREATE_NEW_RECORD_LINE@
+	var poi = POI{PersonID:args[0],Person:args[1],Action:args[2],Location:args[3]}
 
-	@CONTRACT_NAME_LC@AsBytes, _ := json.Marshal(@CONTRACT_NAME_LC@)
-	APIstub.PutState(args[0], @CONTRACT_NAME_LC@AsBytes)
+	poiAsBytes, _ := json.Marshal(poi)
+	APIstub.PutState(args[0], poiAsBytes)
 
 	return shim.Success(nil)
 }
 
-func (s *SmartContract) queryAll@CONTRACT_NAME@s(APIstub shim.ChaincodeStubInterface) sc.Response {
+func (s *SmartContract) queryAllPOIs(APIstub shim.ChaincodeStubInterface) sc.Response {
 
-	startKey := "@CONTRACT_NAME_UC@0"
-	endKey := "@CONTRACT_NAME_UC@999"
+	startKey := "POI0"
+	endKey := "POI999"
 
 	resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
 	if err != nil {
@@ -162,25 +169,29 @@ func (s *SmartContract) queryAll@CONTRACT_NAME@s(APIstub shim.ChaincodeStubInter
 	}
 	buffer.WriteString("]")
 
-	fmt.Printf("- queryAll@CONTRACT_NAME@s:\n%s\n", buffer.String())
+	fmt.Printf("- queryAllPOIs:\n%s\n", buffer.String())
 
 	return shim.Success(buffer.Bytes())
 }
 
-func (s *SmartContract) record@CONTRACT_NAME@Action(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+func (s *SmartContract) recordPOIAction(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
-	if len(args) != @NUMBER_OF_CONTRACT_ITEMS@ {
-		return shim.Error("Incorrect number of arguments. Expecting @NUMBER_OF_CONTRACT_ITEMS@")
+	if len(args) != 4 {
+		return shim.Error("Incorrect number of arguments. Expecting 4")
 	}
 
-	@CONTRACT_NAME_LC@AsBytes, _ := APIstub.GetState(args[0])
-	@CONTRACT_NAME_LC@ := @CONTRACT_NAME@{}
+	poiAsBytes, _ := APIstub.GetState(args[0])
+	poi := POI{}
 
-	json.Unmarshal(@CONTRACT_NAME_LC@AsBytes, &@CONTRACT_NAME_LC@)
-	@CONTRACT_ITEM_RECORD@
+	json.Unmarshal(poiAsBytes, &poi)
+	poi.PersonID = args[0]
+	poi.Person = args[1]
+	poi.Action = args[2]
+	poi.Location = args[3]
+	
 
-	@CONTRACT_NAME_LC@AsBytes, _ = json.Marshal(@CONTRACT_NAME_LC@)
-	APIstub.PutState(args[0], @CONTRACT_NAME_LC@AsBytes)
+	poiAsBytes, _ = json.Marshal(poi)
+	APIstub.PutState(args[0], poiAsBytes)
 
 	return shim.Success(nil)
 }
